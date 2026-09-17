@@ -112,14 +112,17 @@ if submitted:
     if not query.strip():
         st.warning("Enter a listener message first.")
     else:
+        progress = st.empty()
         with st.spinner("Reading the conversation..."):
             try:
-                result = run_agent(query.strip())
+                result = run_agent(query.strip(), progress_callback=progress.info)
                 st.session_state["result"] = result
                 st.session_state["query"] = query.strip()
             except Exception as exc:
                 st.error(f"The support agent could not process this message: {type(exc).__name__}: {exc}")
                 st.caption("Check the Render logs for the provider response. Confirm GROQ_API_KEY and GROQ_MODEL are set in Render.")
+            finally:
+                progress.empty()
 
 result = st.session_state.get("result")
 if result:

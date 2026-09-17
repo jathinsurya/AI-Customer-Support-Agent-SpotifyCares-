@@ -323,21 +323,37 @@ No-context flag: {escalate_no_context}
 
 # ── Main Agent Entry Point ────────────────────────────────────────────────────
 
-def run_agent(customer_text: str) -> AgentResult:
+def run_agent(customer_text: str, progress_callback=None) -> AgentResult:
     """Run the full agent pipeline on a single customer message."""
     from retrieval import retrieve
 
     # Step 1: Classify intent
+    if progress_callback:
+        progress_callback("Classifying intent...")
+    print("[agent] starting intent classification", flush=True)
     intent, confidence = classify_intent(customer_text)
+    print(f"[agent] intent classification complete: {intent}", flush=True)
 
     # Step 2: Retrieve similar past threads
+    if progress_callback:
+        progress_callback("Finding similar resolutions...")
+    print("[agent] starting retrieval", flush=True)
     retrieved = retrieve(customer_text, k=3)
+    print(f"[agent] retrieval complete: {len(retrieved)} results", flush=True)
 
     # Step 3: Draft reply
+    if progress_callback:
+        progress_callback("Drafting reply...")
+    print("[agent] starting reply generation", flush=True)
     reply = draft_reply(customer_text, intent, retrieved)
+    print("[agent] reply generation complete", flush=True)
 
     # Step 4: Decide escalation
+    if progress_callback:
+        progress_callback("Checking escalation...")
+    print("[agent] starting escalation check", flush=True)
     escalate, reason = decide_escalation(customer_text, intent, confidence, retrieved)
+    print("[agent] escalation check complete", flush=True)
 
     return AgentResult(
         customer_text=customer_text,
