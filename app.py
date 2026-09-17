@@ -118,7 +118,8 @@ if submitted:
                 st.session_state["result"] = result
                 st.session_state["query"] = query.strip()
             except Exception as exc:
-                st.error(f"The support agent could not process this message: {exc}")
+                st.error(f"The support agent could not process this message: {type(exc).__name__}: {exc}")
+                st.caption("Check the Render logs for the provider response. Confirm GROQ_API_KEY and GROQ_MODEL are set in Render.")
 
 result = st.session_state.get("result")
 if result:

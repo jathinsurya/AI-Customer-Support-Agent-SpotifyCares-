@@ -28,13 +28,13 @@ This project accepts either a Groq key or an OpenAI key.
 
 ```bash
 export GROQ_API_KEY="your-groq-api-key-here"
-export GROQ_MODEL="llama-3.3-70b-versatile"
+export GROQ_MODEL="qwen/qwen3.8-27b"
 ```
 
 On Windows:
 ```cmd
 set GROQ_API_KEY=your-groq-api-key-here
-set GROQ_MODEL=llama-3.3-70b-versatile
+set GROQ_MODEL=qwen/qwen3.8-27b
 ```
 
 If you are using OpenAI instead:
