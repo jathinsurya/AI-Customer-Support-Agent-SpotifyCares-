@@ -22,8 +22,8 @@ def get_client_and_model():
     """Support OpenAI and Groq-compatible endpoints."""
     groq_key = os.getenv("GROQ_API_KEY")
     if groq_key:
-        preferred = os.getenv("GROQ_MODEL") or "qwen/qwen3.8-27b"
-        models = [preferred]
+        preferred = os.getenv("GROQ_MODEL") or "llama-3.3-70b-versatile"
+        models = list(dict.fromkeys([preferred, "llama-3.3-70b-versatile"]))
         return OpenAI(api_key=groq_key, base_url="https://api.groq.com/openai/v1"), models
 
     openai_key = os.getenv("OPENAI_API_KEY")
