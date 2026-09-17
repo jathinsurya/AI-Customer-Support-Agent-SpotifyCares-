@@ -18,17 +18,29 @@ from typing import Optional
 from openai import OpenAI
 
 
+REQUEST_TIMEOUT_SECONDS = float(os.getenv("LLM_REQUEST_TIMEOUT_SECONDS", "20"))
+
+
 def get_client_and_model():
     """Support OpenAI and Groq-compatible endpoints."""
     groq_key = os.getenv("GROQ_API_KEY")
     if groq_key:
         preferred = os.getenv("GROQ_MODEL") or "llama-3.3-70b-versatile"
         models = list(dict.fromkeys([preferred, "llama-3.3-70b-versatile"]))
-        return OpenAI(api_key=groq_key, base_url="https://api.groq.com/openai/v1"), models
+        return OpenAI(
+            api_key=groq_key,
+            base_url="https://api.groq.com/openai/v1",
+            timeout=REQUEST_TIMEOUT_SECONDS,
+            max_retries=0,
+        ), models
 
     openai_key = os.getenv("OPENAI_API_KEY")
     if openai_key:
-        return OpenAI(api_key=openai_key), ["gpt-4o-mini"]
+        return OpenAI(
+            api_key=openai_key,
+            timeout=REQUEST_TIMEOUT_SECONDS,
+            max_retries=0,
+        ), ["gpt-4o-mini"]
 
     raise RuntimeError("No API key found. Set GROQ_API_KEY or OPENAI_API_KEY.")
 

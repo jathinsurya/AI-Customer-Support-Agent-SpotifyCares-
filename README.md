@@ -52,7 +52,7 @@ Run the Spotify-inspired support desk locally:
 streamlit run app.py
 ```
 
-For Render, use `streamlit run app.py --server.port $PORT --server.address 0.0.0.0` as the start command and add `GROQ_API_KEY` and `GROQ_MODEL` as environment variables. Vercel is not recommended for this Streamlit app.
+For Render, use `streamlit run app.py --server.port $PORT --server.address 0.0.0.0` as the start command and add `GROQ_API_KEY`, `GROQ_MODEL`, and `LLM_REQUEST_TIMEOUT_SECONDS` (for example, `20`) as environment variables. The timeout prevents the UI from waiting forever when the model provider is unavailable. Vercel is not recommended for this Streamlit app.
 
 ---
 

@@ -9,3 +9,5 @@ services:
         sync: false
       - key: GROQ_MODEL
         value: llama-3.3-70b-versatile
+      - key: LLM_REQUEST_TIMEOUT_SECONDS
+        value: "20"
