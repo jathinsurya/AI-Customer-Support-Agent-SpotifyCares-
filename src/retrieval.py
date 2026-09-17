@@ -2,7 +2,7 @@
 """
 retrieval.py
 ------------
-FAISS-based nearest-neighbour retrieval over historical Spotify support threads.
+Nearest-neighbour retrieval over historical Spotify support threads.
 Used by the reply drafter to ground responses in real past resolutions.
 """
 
@@ -19,13 +19,14 @@ EMBEDDINGS_PATH = ROOT / "data" / "corpus_embeddings.pkl"
 _index = None
 _threads = None
 _embeddings = None
+_normed_embeddings = None
 _backend = None
 _vectorizer = None
 
 
 def _load():
-    global _index, _threads, _embeddings, _backend, _vectorizer
-    if _index is not None:
+    global _index, _threads, _embeddings, _normed_embeddings, _backend, _vectorizer
+    if _normed_embeddings is not None:
         return
 
     if not EMBEDDINGS_PATH.exists():
@@ -33,8 +34,6 @@ def _load():
             "data/corpus_embeddings.pkl not found. "
             "Run: python src/prepare_data.py"
         )
-
-    import faiss
 
     with open(EMBEDDINGS_PATH, "rb") as f:
         data = pickle.load(f)
@@ -47,13 +46,9 @@ def _load():
     if _embeddings.ndim != 2 or _embeddings.shape[0] == 0:
         raise ValueError("Retrieval corpus is empty. Run python src/prepare_data.py")
 
-    dim = _embeddings.shape[1]
-    _index = faiss.IndexFlatIP(dim)  # inner product = cosine on normalised vecs
-
     # Normalise for cosine similarity
     norms = np.linalg.norm(_embeddings, axis=1, keepdims=True)
-    normed = _embeddings / (norms + 1e-9)
-    _index.add(normed.astype(np.float32))
+    _normed_embeddings = (_embeddings / (norms + 1e-9)).astype(np.float32)
 
 
 def embed_query(text: str) -> np.ndarray:
@@ -84,17 +79,18 @@ def retrieve(query: str, k: int = 3) -> list[dict]:
     """
     _load()
     vec = embed_query(query)
-    scores, indices = _index.search(vec, k)
+    scores = (_normed_embeddings @ vec.T).ravel()
+    k = min(k, len(scores))
+    indices = np.argpartition(scores, -k)[-k:]
+    indices = indices[np.argsort(scores[indices])[::-1]]
 
     results = []
-    for score, idx in zip(scores[0], indices[0]):
-        if idx < 0:
-            continue
+    for idx in indices:
         thread = _threads[idx]
         results.append({
             "customer_text": thread["customer_text"],
             "brand_reply": thread["brand_reply"],
-            "score": float(score),
+            "score": float(scores[idx]),
         })
     return results
 
