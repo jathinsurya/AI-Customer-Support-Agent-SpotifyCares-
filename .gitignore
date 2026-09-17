@@ -1,0 +1,33 @@
+# Environment
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Data (large files — don't commit)
+data/twcs.csv
+data/corpus_embeddings.pkl
+data/spotify_threads.json
+!data/corpus_embeddings.pkl
+
+# Outputs (generated)
+outputs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kaggle credentials
+kaggle.json
