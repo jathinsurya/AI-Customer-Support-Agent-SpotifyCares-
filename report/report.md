@@ -4,7 +4,7 @@
 **Brand:** SpotifyCares (Twitter)  
 **Dataset:** Customer Support on Twitter (Kaggle, thoughtvector/customer-support-on-twitter)  
 **Model:** GPT-4o-mini (OpenAI)  
-**Author:** [Your Name]
+**Author:** Jathin Surya K
 
 ---
 
